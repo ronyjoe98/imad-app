@@ -5,7 +5,7 @@ var img=document.getElementById('madi');
 var mr=0;
 function moveRight(){
     mr=mr + 10;
-    img.style.mr = mr + 'px';
+    img.style.marginRight = mr + 'px';
 }
 img.onclick = function(){
     var interval= setInterval(moveRight,50);
