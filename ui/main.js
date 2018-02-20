@@ -11,5 +11,7 @@ button.onclick = function(){
                 span.innerHTML = counter.toString();
             }
         }
-    }    
-}
+    }; 
+    request.open('GET', 'http://ronyjoe98.imad.hasura-app.io/counter',TRUE);
+    request.send(null);
+};
