@@ -1,9 +1,18 @@
 var express = require('express');
 var morgan = require('morgan');
 var path = require('path');
-
+var Pool = require('pg').Pool;
+var config = {
+    user: 'ronyjoe98',
+    databse: 'ronyjoe98',
+    host: 'db.imad.hasura-app.io',
+    port: '5432',
+    password: process.env.DB_PASSWORD
+};
 var app = express();
 app.use(morgan('combined'));
+
+var pool = new Pool(config);
 var articles = {
     'article-one' : {
     title: 'Article One | Rony',
@@ -57,7 +66,7 @@ function createTemplate(data){
         <hr/>
         <h3>${heading}</h3>
         <div>
-            ${date}
+            ${date.toDateString()}
         </div>
         <div>
            ${content}
@@ -84,7 +93,25 @@ app.get('/submit-name',function(req,res){
 
 app.get('/:articleName',function(req,res){
    var articleName = req.params.articleName;
-   res.send(createTemplate(articles[articleName]));
+   pool.query("SELECT * FROM article WHERE TITLE='" + articleName + "'",function(err,result){
+       if(err)
+       {
+            res.status(500).send(err.toString());
+       }else
+       {
+           if(result.rows.length === 0)
+           {
+               res.staus(404).send('Article not Found');
+           }else
+           {
+               var articleData=result.rows[0];
+              res.send(createTemplate(articles[articleData])); 
+           }
+           
+       }
+       
+   });
+   
 });
 
 app.get('/article-two',function(req,res){
